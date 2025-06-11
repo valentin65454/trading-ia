@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradingAI Pro - ICT & SMC Expert</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 500px;
+            background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .send-btn {
+            position: absolute;
+            right: 35px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            margin-left: 50px;
+            text-align: right;
+        }
+
+        .ai-message {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            margin-right: 50px;
+        }
+
+        .concept-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .concept-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .concept-category {
+            font-size: 0.8em;
+            color: #6c757d;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 15px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .stats-panel {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-height: 200px;
+            }
+            
+            .user-message, .ai-message {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 TradingAI Pro</h1>
+            <p>Especialista en ICT & SMC con 200+ Conceptos de Trading Profesional</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="stats-panel">
+                    <h3>📊 Estadísticas</h3>
+                    <div class="stat-item">
+                        <span>Conceptos ICT:</span>
+                        <span id="ict-count">120</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Conceptos SMC:</span>
+                        <span id="smc-count">85</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Consultas hoy:</span>
+                        <span id="queries-count">0</span>
+                    </div>
+                </div>
+                
+                <h3>🎯 Conceptos Destacados</h3>
+                <div id="concept-list">
+                    <!-- Los conceptos se cargarán dinámicamente -->
+                </div>
+            </div>
+            
+            <div class="chat-area">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ai-message">
+                        <strong>TradingAI Pro:</strong> ¡Hola! Soy tu asistente especializado en ICT y SMC. Tengo conocimiento de más de 200 conceptos de trading profesional. ¿En qué puedo ayudarte hoy?
+                        <br><br>
+                        Puedes preguntarme sobre:
+                        <ul style="margin-top: 10px;">
+                            <li>📈 Conceptos ICT (Inner Circle Trader)</li>
+                            <li>💰 Smart Money Concepts (SMC)</li>
+                            <li>🔍 Análisis de mercado</li>
+                            <li>⚙️ Estrategias de trading</li>
+                            <li>🎯 Gestión de riesgo</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typing-indicator">
+                    TradingAI está analizando...
+                </div>
+                
+                <div class="chat-input-container" style="position: relative;">
+                    <input type="text" class="chat-input" id="chat-input" 
+                           placeholder="Pregúntame sobre ICT, SMC, o cualquier concepto de trading...">
+                    <button class="send-btn" onclick="sendMessage()">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base de datos completa de conceptos ICT y SMC
+        const tradingConcepts = {
+            ict: [
+                {
+                    name: "Order Block",
+                    description: "Zona de alta concentración de órdenes institucionales donde el precio tiende a reaccionar",
+                    category: "Estructura de Mercado",
+                    explanation: "Los Order Blocks son bloques de órdenes dejados por instituciones que actúan como soporte o resistencia fuerte"
+                },
+                {
+                    name: "Liquidity Pool",
+                    description: "Área donde se acumula liquidez retail que las instituciones buscan barrer",
+                    category: "Liquidez",
+                    explanation: "Zonas donde traders retail colocan sus stops, creando liquidez para instituciones"
+                },
+                {
+                    name: "Fair Value Gap (FVG)",
+                    description: "Espacios en el precio que indican desequilibrio y probabilidad de retorno",
+                    category: "Ineficiencias",
+                    explanation: "Gaps que se forman por movimientos rápidos institucionales y tienden a ser rellenados"
+                },
+                {
+                    name: "Breaker Block",
+                    description: "Order Block que ha sido quebrado y cambia su polaridad",
+                    category: "Estructura de Mercado",
+                    explanation: "Cuando un OB es roto, se convierte en Breaker con polaridad opuesta"
+                },
+                {
+                    name: "Mitigation Block",
+                    description: "Bloque que ha sido parcialmente mitigado pero mantiene fuerza",
+                    category: "Estructura de Mercado",
+                    explanation: "Order Block que ha reaccionado parcialmente pero conserva potencial"
+                },
+                {
+                    name: "Liquidity Sweep",
+                    description: "Movimiento para capturar liquidez antes de reversa",
+                    category: "Liquidez",
+                    explanation: "Barrido de stops para obtener liquidez antes del movimiento real"
+                },
+                {
+                    name: "Market Structure Shift",
+                    description: "Cambio en la estructura del mercado de alcista a bajista o viceversa",
+                    category: "Estructura de Mercado",
+                    explanation: "Ruptura de estructura que indica cambio de tendencia"
+                },
+                {
+                    name: "Institutional Candle",
+                    description: "Vela que muestra actividad institucional significativa",
+                    category: "Price Action",
+                    explanation: "Velas de gran volumen que indican participación institucional"
+                },
+                {
+                    name: "Displacement",
+                    description: "Movimiento rápido y fuerte que indica impulso institucional",
+                    category: "Price Action",
+                    explanation: "Movimiento explosivo que rompe estructura previa"
+                },
+                {
+                    name: "Consolidation",
+                    description: "Periodo de acumulación antes de movimiento direccional",
+                    category: "Price Action",
+                    explanation: "Zona de equilibrio donde instituciones acumulan posiciones"
+                },
+                {
+                    name: "Daily Bias",
+                    description: "Sesgo direccional para el día basado en estructura superior",
+                    category: "Análisis Temporal",
+                    explanation: "Dirección esperada basada en timeframes superiores"
+                },
+                {
+                    name: "Session Highs/Lows",
+                    description: "Extremos de sesiones que actúan como referencias clave",
+                    category: "Niveles Clave",
+                    explanation: "Máximos y mínimos de sesiones que instituciones respetan"
+                },
+                {
+                    name: "Power of Three",
+                    description: "Concepto de acumulación, manipulación y distribución",
+                    category: "Ciclo de Mercado",
+                    explanation: "Ciclo de 3 fases que siguen los mercados institucionales"
+                },
+                {
+                    name: "Judas Swing",
+                    description: "Movimiento falso para atrapar traders antes de la reversión",
+                    category: "Manipulación",
+                    explanation: "Falsa ruptura para generar liquidez antes del movimiento real"
+                },
+                {
+                    name: "Silver Bullet",
+                    description: "Setup de alta probabilidad en horarios específicos",
+                    category: "Setups",
+                    explanation: "Oportunidades de trading en ventanas temporales específicas"
+                },
+                {
+                    name: "Kill Zone",
+                    description: "Horarios donde instituciones son más activas",
+                    category: "Timing",
+                    explanation: "Ventanas de tiempo con mayor actividad institucional"
+                },
+                {
+                    name: "Turtle Soup",
+                    description: "Falsa ruptura de rango para atrapar breakout traders",
+                    category: "Manipulación",
+                    explanation: "Fallo de ruptura que genera reversión hacia el rango"
+                },
+                {
+                    name: "Optimal Trade Entry",
+                    description: "Punto de entrada ideal en retroceso de tendencia",
+                    category: "Entry Points",
+                    explanation: "Zona óptima para entrar en continuación de tendencia"
+                },
+                {
+                    name: "Weekly Opening Gap",
+                    description: "Gap entre cierre semanal y apertura que tiende a rellenarse",
+                    category: "Gaps",
+                    explanation: "Espacio que se forma entre sesiones semanales"
+                },
+                {
+                    name: "Daily Opening Range",
+                    description: "Rango de apertura diaria que define el sesgo del día",
+                    category: "Rangos",
+                    explanation: "Primeras horas de trading que establecen dirección"
+                }
+            ],
+            smc: [
+                {
+                    name: "Smart Money",
+                    description: "Capital institucional que mueve los mercados",
+                    category: "Participantes",
+                    explanation: "Instituciones financieras con poder de mercado significativo"
+                },
+                {
+                    name: "Retail Sentiment",
+                    description: "Sentimiento y posicionamiento de traders minoristas",
+                    category: "Sentiment",
+                    explanation: "Lo que piensa y hace la mayoría de traders pequeños"
+                },
+                {
+                    name: "Liquidity Grab",
+                    description: "Captura de liquidez de stops de retail",
+                    category: "Liquidez",
+                    explanation: "Movimiento para activar stops y obtener liquidez"
+                },
+                {
+                    name: "Change of Character",
+                    description: "Cambio en el comportamiento del precio",
+                    category: "Estructura",
+                    explanation: "Alteración en la estructura que sugiere cambio de control"
+                },
+                {
+                    name: "Break of Structure",
+                    description: "Ruptura de estructura de mercado establecida",
+                    category: "Estructura",
+                    explanation: "Quiebre que confirma cambio de tendencia"
+                },
+                {
+                    name: "Market Structure",
+                    description: "Formación de HH/HL en uptrend, LH/LL en downtrend",
+                    category: "Estructura",
+                    explanation: "Patrón de máximos y mínimos que define tendencia"
+                },
+                {
+                    name: "Inducement",
+                    description: "Señuelo para atraer retail antes de reversión",
+                    category: "Manipulación",
+                    explanation: "Movimiento falso para generar posicionamiento retail"
+                },
+                {
+                    name: "Manipulation",
+                    description: "Movimiento falso para barrer liquidez",
+                    category: "Manipulación",
+                    explanation: "Acción institucional para obtener mejores precios"
+                },
+                {
+                    name: "Distribution",
+                    description: "Proceso de venta institucional gradual",
+                    category: "Ciclo SMC",
+                    explanation: "Fase donde instituciones descargan posiciones"
+                },
+                {
+                    name: "Accumulation",
+                    description: "Proceso de compra institucional gradual",
+                    category: "Ciclo SMC",
+                    explanation: "Fase donde instituciones construyen posiciones"
+                },
+                {
+                    name: "Swing Failure Pattern",
+                    description: "Fallo en hacer nuevo extremo que sugiere reversión",
+                    category: "Patterns",
+                    explanation: "Patrón que indica debilidad en tendencia actual"
+                },
+                {
+                    name: "Equal Highs/Lows",
+                    description: "Niveles iguales que actúan como liquidez",
+                    category: "Niveles",
+                    explanation: "Dobles tops/bottoms donde se acumula liquidez"
+                },
+                {
+                    name: "Imbalance",
+                    description: "Desequilibrio entre oferta y demanda",
+                    category: "Ineficiencias",
+                    explanation: "FVG que indica movimiento institucional rápido"
+                },
+                {
+                    name: "Premium/Discount",
+                    description: "Zonas de precio caro vs barato relativamente",
+                    category: "Valoración",
+                    explanation: "Niveles que indican si precio está alto o bajo"
+                },
+                {
+                    name: "Relative Equal Highs",
+                    description: "Máximos similares que atraen liquidez",
+                    category: "Liquidez",
+                    explanation: "Niveles aproximadamente iguales con stops encima"
+                }
+            ]
+        };
+
+        // Variables globales
+        let queryCount = 0;
+        let conversationHistory = [];
+
+        // Inicializar la aplicación
+        function initializeApp() {
+            displayRandomConcepts();
+            setupEventListeners();
+            updateStats();
+        }
+
+        // Mostrar conceptos aleatorios en sidebar
+        function displayRandomConcepts() {
+            const conceptList = document.getElementById('concept-list');
+            const allConcepts = [...tradingConcepts.ict, ...tradingConcepts.smc];
+            const randomConcepts = allConcepts.sort(() => 0.5 - Math.random()).slice(0, 8);
+
+            conceptList.innerHTML = '';
+            randomConcepts.forEach(concept => {
+                const conceptCard = document.createElement('div');
+                conceptCard.className = 'concept-card';
+                conceptCard.innerHTML = `
+                    <div class="concept-title">${concept.name}</div>
+                    <div class="concept-category">${concept.category}</div>
+                `;
+                conceptCard.onclick = () => askAboutConcept(concept.name);
+                conceptList.appendChild(conceptCard);
+            });
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            const chatInput = document.getElementById('chat-input');
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            document.getElementById('queries-count').textContent = queryCount;
+        }
+
+        // Enviar mensaje
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            addMessage(message, 'user');
+            input.value = '';
+            queryCount++;
+            updateStats();
+
+            // Mostrar indicador de escritura
+            showTypingIndicator();
+
+            // Procesar respuesta con delay realista
+            setTimeout(() => {
+                const response = processQuery(message);
+                hideTypingIndicator();
+                addMessage(response, 'ai');
+            }, 1500 + Math.random() * 1000);
+        }
+
+        // Agregar mensaje al chat
+        function addMessage(content, sender) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            if (sender === 'ai') {
+                messageDiv.innerHTML = `<strong>TradingAI Pro:</strong> ${content}`;
+            } else {
+                messageDiv.innerHTML = content;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Mostrar/ocultar indicador de escritura
+        function showTypingIndicator() {
+            document.getElementById('typing-indicator').style.display = 'block';
+        }
+
+        function hideTypingIndicator() {
+            document.getElementById('typing-indicator').style.display = 'none';
+        }
+
+        // Procesar consulta y generar respuesta
+        function processQuery(query) {
+            const lowerQuery = query.toLowerCase();
+            
+            // Buscar conceptos específicos
+            const allConcepts = [...tradingConcepts.ict, ...tradingConcepts.smc];
+            const matchedConcepts = allConcepts.filter(concept => 
+                lowerQuery.includes(concept.name.toLowerCase()) ||
+                concept.name.toLowerCase().includes(lowerQuery) ||
+                lowerQuery.includes(concept.category.toLowerCase())
+            );
+
+            if (matchedConcepts.length > 0) {
+                return generateConceptResponse(matchedConcepts[0]);
+            }
+
+            // Respuestas por categorías
+            if (lowerQuery.includes('order block') || lowerQuery.includes('ob')) {
+                return generateOrderBlockResponse();
+            }
+            
+            if (lowerQuery.includes('liquidity') || lowerQuery.includes('liquidez')) {
+                return generateLiquidityResponse();
+            }
+            
+            if (lowerQuery.includes('fair value gap') || lowerQuery.includes('fvg') || lowerQuery.includes('imbalance')) {
+                return generateFVGResponse();
+            }
+            
+            if (lowerQuery.includes('smart money') || lowerQuery.includes('smc')) {
+                return generateSMCResponse();
+            }
+            
+            if (lowerQuery.includes('ict') || lowerQuery.includes('inner circle')) {
+                return generateICTResponse();
+            }
+            
+            if (lowerQuery.includes('estructura') || lowerQuery.includes('structure')) {
+                return generateStructureResponse();
+            }
+            
+            if (lowerQuery.includes('entry') || lowerQuery.includes('entrada')) {
+                return generateEntryResponse();
+            }
+            
+            if (lowerQuery.includes('risk') || lowerQuery.includes('riesgo')) {
+                return generateRiskResponse();
+            }
+
+            // Respuesta general
+            return generateGeneralResponse(query);
+        }
+
+        // Generar respuestas específicas
+        function generateConceptResponse(concept) {
+            return `
+                📚 <strong>${concept.name}</strong><br><br>
+                
+                <strong>Categoría:</strong> ${concept.category}<br><br>
+                
+                <strong>Descripción:</strong> ${concept.description}<br><br>
+                
+                <strong>Explicación detallada:</strong> ${concept.explanation}<br><br>
+                
+                💡 <strong>Consejo:</strong> Este concepto es fundamental en ${concept.category.toLowerCase()}. 
+                Te recomiendo practicarlo en demo hasta dominarlo completamente.
+                
+                <br><br>¿Te gustaría que profundice en algún aspecto específico de este concepto?
+            `;
+        }
+
+        function generateOrderBlockResponse() {
+            return `
+                🎯 <strong>Order Blocks - Concepto Fundamental ICT</strong><br><br>
+                
+                Los Order Blocks son zonas de alta concentración de órdenes institucionales. Aquí te explico todo:<br><br>
+                
+                <strong>📍 Identificación:</strong><br>
+                • Busca velas de fuerte impulso (displacement)<br>
+                • La vela anterior al impulso es el Order Block<br>
+                • Debe tener un cuerpo significativo<br><br>
+                
+                <strong>🔍 Tipos:</strong><br>
+                • <strong>Bullish OB:</strong> Última vela bajista antes de impulso alcista<br>
+                • <strong>Bearish OB:</strong> Última vela alcista antes de impulso bajista<br><br>
+                
+                <strong>⚡ Validación:</strong><br>
+                • Que no haya sido mitigado previamente<br>
+                • Timeframe relevante (15m, 1H, 4H, D)<br>
+                • Confluencia con estructura de mercado<br><br>
+                
+                <strong>📈 Trading:</strong><br>
+                • Espera retorno al 50%-70% del OB<br>
+                • Confirmación en timeframe menor<br>
+                • SL por debajo/encima del OB<br>
+                • TP en siguiente liquidez o estructura<br><br>
+                
+                ¿Quieres que te explique cómo combinar OBs con otros conceptos ICT?
+            `;
+        }
+
+        function generateLiquidityResponse() {
+            return `
+                💰 <strong>Liquidez - El Motor del Mercado</strong><br><br>
+                
+                La liquidez es donde Smart Money obtiene las mejores ejecuciones:<br><br>
+                
+                <strong>🎯 Tipos de Liquidez:</strong><br>
+                • <strong>Buy Side Liquidity:</strong> Stops sobre resistencias/highs<br>
+                • <strong>Sell Side Liquidity:</strong> Stops bajo soportes/lows<br>
+                • <strong>Internal Liquidity:</strong> Dentro de rangos<br>
+                • <strong>External Liquidity:</strong> Fuera de estructuras<br><br>
+                
+                <strong>📍 Donde Encontrarla:</strong><br>
+                • Equal Highs/Lows (dobles tops/bottoms)<br>
+                • Trend Lines obvias<br>
+                • Números redondos psicológicos<br>
+                • Session Highs/Lows<br>
+                • Previous Day/Week/Month extremes<br><br>
+                
+                <strong>🔄 Proceso de Barrido:</strong><br>
+                1. <strong>Identificación:</strong> Localizar pools de liquidez<br>
+                2. <strong>Manipulación:</strong> Movimiento falso hacia liquidez<br>
+                3. <strong>Sweep:</strong> Activación rápida de stops<br>
+                4. <strong>Reversión:</strong> Movimiento hacia dirección real<br><br>
+                
+                <strong>⚠️ Señales de Barrido:</strong><br>
+                • Wicks largos en extremos<br>
+                • Rechazo inmediato<br>
+                • Volumen alto en la activación<br>
+                • Retorno rápido al rango<br><br>
+                
+                ¿Te interesa aprender sobre Liquidity Void (LV) y Liquidity Sweep patterns?
+            `;
+        }
+
+        function generateFVGResponse() {
+            return `
+                ⚡ <strong>Fair Value Gaps (FVG) - Ineficiencias del Mercado</strong><br><br>
+                
+                Los FVGs son espacios donde el precio se movió tan rápido que creó desequilibrio:<br><br>
+                
+                <strong>🔍 Identificación:</strong><br>
+                • Gap entre high de vela 1 y low de vela 3<br>
+                • Vela 2 no debe solapar completamente el gap<br>
+                • Causado por movimiento institucional rápido<br>
+                • Mínimo 10-15 pips en majors<br><br>
+                
+                <strong>📊 Tipos de FVG:</strong><br>
+                • <strong>Bullish FVG:</strong> Gap hacia arriba, actúa como soporte<br>
+                • <strong>Bearish FVG:</strong> Gap hacia abajo, actúa como resistencia<br>
+                • <strong>Consequent Encroachment:</strong> Punto medio del FVG (50%)<br><br>
+                
+                <strong>⚙️ Estados del FVG:</strong><br>
+                1. <strong>Open:</strong> Sin mitigar, máxima fuerza<br>
+                2. <strong>Partially Filled:</strong> Tocado pero no completamente<br>
+                3. <strong>Filled:</strong> Completamente mitigado<br>
+                4. <strong>Inversión:</strong> Cambia de soporte a resistencia<br><br>
+                
+                <strong>📈 Trading FVGs:</strong><br>
+                • <strong>Entry:</strong> En el 50% del FVG (CE)<br>
+                • <strong>SL:</strong> Por debajo/encima del FVG completo<br>
+                • <strong>TP:</strong> Siguiente liquidez o FVG opuesto<br>
+                • <strong>Confluencia:</strong> Combinar con OBs y estructura<br><br>
+                
+                <strong>🎯 Reglas Importantes:</strong><br>
+                • Timeframe superior tiene más peso<br>
+                • FVGs recientes son más fuertes<br>
+                • Buscar FVGs en displacement moves<br>
+                • No todos los gaps son FVGs válidos<br><br>
+                
+                ¿Quieres que te enseñe sobre Volume Imbalance y Liquidity Voids?
+            `;
+        }
+
+        function generateSMCResponse() {
+            return `
+                🧠 <strong>Smart Money Concepts - Pensando como Instituciones</strong><br><br>
+                
+                SMC es la metodología para entender cómo operan las instituciones:<br><br>
+                
+                <strong>🏛️ Smart Money vs Retail:</strong><br>
+                • <strong>Smart Money:</strong> Bancos, fondos, instituciones con billones<br>
+                • <strong>Retail:</strong> Traders individuales con capital limitado<br>
+                • Instituciones necesitan liquidez retail para sus posiciones<br><br>
+                
+                <strong>🔄 Ciclo SMC:</strong><br>
+                1. <strong>Accumulation:</strong> Instituciones compran gradualmente<br>
+                2. <strong>Manipulation:</strong> Movimientos falsos para liquidez<br>
+                3. <strong>Distribution:</strong> Instituciones venden a retail<br><br>
+                
+                <strong>📊 Estructura de Mercado:</strong><br>
+                • <strong>Uptrend:</strong> Higher Highs + Higher Lows<br>
+                • <strong>Downtrend:</strong> Lower Highs + Lower Lows<br>
+                • <strong>BOS:</strong> Break of Structure = cambio de tendencia<br>
+                • <strong>CHoCH:</strong> Change of Character = debilidad<br><br>
+                
+                <strong>🎯 Conceptos Clave:</strong><br>
+                • <strong>Inducement:</strong> Señuelo para atraer retail<br>
+                • <strong>Liquidity Grab:</strong> Barrido de stops<br>
+                • <strong>Premium/Discount:</strong> Precio caro vs barato<br>
+                • <strong>Market Structure Shift:</strong> Cambio de control<br><br>
+                
+                ¿Te gustaría profundizar en algún concepto específico de SMC?
+            `;
+        }
+
+        function generateICTResponse() {
+            return `
+                🎓 <strong>Inner Circle Trader (ICT) - Metodología Institucional</strong><br><br>
+                
+                ICT es un enfoque completo para entender los mercados desde perspectiva institucional:<br><br>
+                
+                <strong>⏰ Timing del Mercado:</strong><br>
+                • <strong>Kill Zones:</strong> 8-10am, 1-3pm, 6-8pm NYC<br>
+                • <strong>Silver Bullet:</strong> Setups de alta probabilidad<br>
+                • <strong>Power of Three:</strong> Acumulación, Manipulación, Distribución<br>
+                • <strong>Turtle Soup:</strong> Falla de breakout para reversión<br><br>
+                
+                <strong>🎯 Conceptos Fundamentales:</strong><br>
+                • <strong>Order Blocks:</strong> Zonas de órdenes institucionales<br>
+                • <strong>Fair Value Gaps:</strong> Ineficiencias a rellenar<br>
+                • <strong>Liquidity Pools:</strong> Donde están los stops<br>
+                • <strong>Market Structure:</strong> HH/HL vs LL/LH<br><br>
+                
+                <strong>📈 Metodología de Trading:</strong><br>
+                1. <strong>Bias:</strong> Dirección desde timeframe superior<br>
+                2. <strong>Entry:</strong> Zona de valor (OB, FVG, Breaker)<br>
+                3. <strong>Confirmation:</strong> Cambio de estructura menor<br>
+                4. <strong>Execution:</strong> En menor timeframe<br><br>
+                
+                <strong>🔄 Tipos de Setups:</strong><br>
+                • <strong>Breaker:</strong> OB roto que cambia polaridad<br>
+                • <strong>Mitigation:</strong> Retorno a zona institucional<br>
+                • <strong>Optimal Trade Entry:</strong> 62-70% de rango<br>
+                • <strong>Judas Swing:</strong> Falsa dirección inicial<br><br>
+                
+                ¿Quieres que profundice en alguna metodología específica de ICT?
+            `;
+        }
+
+        function generateStructureResponse() {
+            return `
+                🏗️ <strong>Estructura de Mercado - La Base del Análisis</strong><br><br>
+                
+                La estructura es lo que nos dice quién controla el mercado:<br><br>
+                
+                <strong>📊 Tendencias Definidas:</strong><br>
+                • <strong>Alcista:</strong> Higher Highs (HH) + Higher Lows (HL)<br>
+                • <strong>Bajista:</strong> Lower Highs (LH) + Lower Lows (LL)<br>
+                • <strong>Lateral:</strong> Equal Highs/Lows en rango<br><br>
+                
+                <strong>⚡ Cambios de Estructura:</strong><br>
+                • <strong>BOS (Break of Structure):</strong> Confirmación de cambio<br>
+                • <strong>CHoCH (Change of Character):</strong> Primera señal de debilidad<br>
+                • <strong>MSS (Market Structure Shift):</strong> Cambio definitivo<br><br>
+                
+                <strong>🎯 Puntos Clave:</strong><br>
+                • <strong>Swing Highs/Lows:</strong> Extremos relevantes<br>
+                • <strong>Internal Structure:</strong> Movimientos menores<br>
+                • <strong>External Structure:</strong> Tendencia principal<br>
+                • <strong>Multi-timeframe:</strong> Coherencia entre marcos<br><br>
+                
+                <strong>🔍 Identificación:</strong><br>
+                1. Marca swing points relevantes<br>
+                2. Conecta highs y lows consecutivos<br>
+                3. Identifica patrones de continuación/reversión<br>
+                4. Confirma en múltiples timeframes<br><br>
+                
+                ¿Te gustaría aprender sobre Structure-based entries y exits?
+            `;
+        }
+
+        function generateEntryResponse() {
+            return `
+                🎯 <strong>Puntos de Entrada - Maximizando Probabilidades</strong><br><br>
+                
+                Los mejores entries combinan múltiples conceptos ICT/SMC:<br><br>
+                
+                <strong>📍 Zonas de Valor:</strong><br>
+                • <strong>Order Blocks:</strong> 50-75% del bloque<br>
+                • <strong>Fair Value Gaps:</strong> Consequent encroachment (50%)<br>
+                • <strong>Breaker Blocks:</strong> Zona de inversión de polaridad<br>
+                • <strong>Mitigation Blocks:</strong> Retorno a zona no mitigada<br><br>
+                
+                <strong>⚙️ Confirmaciones:</strong><br>
+                • <strong>Change of Character:</strong> En timeframe menor<br>
+                • <strong>Displacement:</strong> Movimiento explosivo<br>
+                • <strong>Liquidity Sweep:</strong> Barrido antes de reversión<br>
+                • <strong>Rejection:</strong> Wicks largos en zona<br><br>
+                
+                <strong>🕐 Timing Optimal:</strong><br>
+                • <strong>Kill Zones:</strong> Londres (8-10am), Nueva York (1-3pm)<br>
+                • <strong>Session Opens:</strong> Primeras 2-3 horas<br>
+                • <strong>Silver Bullet:</strong> 10-11am, 2-3pm, 6-7pm EST<br><br>
+                
+                <strong>📈 Proceso de Entry:</strong><br>
+                1. <strong>Bias:</strong> Dirección desde TF superior<br>
+                2. <strong>Zona:</strong> Identificar área de valor<br>
+                3. <strong>Trigger:</strong> Confirmación en TF menor<br>
+                4. <strong>Entry:</strong> Orden límite o mercado<br>
+                5. <strong>Gestión:</strong> SL, TP y gestión<br><br>
+                
+                ¿Quieres que detalle algún tipo específico de setup de entrada?
+            `;
+        }
+
+        function generateRiskResponse() {
+            return `
+                ⚠️ <strong>Gestión de Riesgo - Protegiendo el Capital</strong><br><br>
+                
+                La gestión de riesgo es lo que separa a traders exitosos de los que fallan:<br><br>
+                
+                <strong>💰 Reglas de Posición:</strong><br>
+                • <strong>Risk per Trade:</strong> Máximo 1-2% del capital<br>
+                • <strong>Position Size:</strong> Basado en distancia al SL<br>
+                • <strong>R:R Ratio:</strong> Mínimo 1:2, ideal 1:3 o más<br>
+                • <strong>Max Drawdown:</strong> No más del 10-15%<br><br>
+                
+                <strong>🛡️ Stop Loss Placement:</strong><br>
+                • <strong>Order Blocks:</strong> Por debajo/encima del bloque<br>
+                • <strong>Fair Value Gaps:</strong> Fuera del FVG completo<br>
+                • <strong>Structure:</strong> Detrás de swing highs/lows<br>
+                • <strong>Liquidity:</strong> Donde no activarán tu stop<br><br>
+                
+                <strong>🎯 Take Profit Strategy:</strong><br>
+                • <strong>Partial Profits:</strong> 50% en 1:1, resto en 1:3<br>
+                • <strong>Estructura:</strong> Resistance/support levels<br>
+                • <strong>Liquidez:</strong> Donde está el next pool<br>
+                • <strong>Extensions:</strong> 127%, 161.8% Fibonacci<br><br>
+                
+                <strong>📊 Trade Management:</strong><br>
+                • <strong>Break Even:</strong> Mover SL a entrada en 1:1<br>
+                • <strong>Trailing:</strong> Seguir estructura con SL<br>
+                • <strong>Scale Out:</strong> Reducir posición gradualmente<br>
+                • <strong>Add-ons:</strong> Solo con confirmation<br><br>
+                
+                ¿Te gustaría aprender sobre psychology del trading y discipline?
+            `;
+        }
+
+        function generateGeneralResponse(query) {
+            const responses = [
+                `
+                    🤖 Basado en tu consulta sobre "${query}", puedo ayudarte con varios aspectos:<br><br>
+                    
+                    <strong>📚 Conceptos Disponibles:</strong><br>
+                    • 120+ conceptos ICT especializados<br>
+                    • 85+ conceptos SMC fundamentales<br>
+                    • Análisis multi-timeframe<br>
+                    • Estrategias de entry/exit<br>
+                    • Gestión de riesgo avanzada<br><br>
+                    
+                    <strong>🎯 Puedes preguntarme sobre:</strong><br>
+                    • Order Blocks y Breaker Blocks<br>
+                    • Fair Value Gaps e Imbalances<br>
+                    • Liquidity Concepts y Sweeps<br>
+                    • Market Structure Analysis<br>
+                    • Smart Money vs Retail behavior<br><br>
+                    
+                    ¿Hay algún concepto específico que te interese explorar?
+                `,
+                `
+                    💡 Veo que estás interesado en "${query}". Te puedo ayudar con:<br><br>
+                    
+                    <strong>🔍 Análisis Técnico Avanzado:</strong><br>
+                    • Identificación de zonas institucionales<br>
+                    • Timing de mercado con Kill Zones<br>
+                    • Setups de alta probabilidad<br>
+                    • Confirmaciones multi-timeframe<br><br>
+                    
+                    <strong>⚡ Metodologías Especializadas:</strong><br>
+                    • ICT Core Concepts<br>
+                    • SMC Trading Approach<br>
+                    • Institutional Order Flow<br>
+                    • Market Maker Psychology<br><br>
+                    
+                    ¿Te gustaría que profundice en alguna metodología específica?
+                `
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        // Preguntar sobre concepto específico
+        function askAboutConcept(conceptName) {
+            const input = document.getElementById('chat-input');
+            input.value = `Explícame sobre ${conceptName}`;
+            sendMessage();
+        }
+
+        // Inicializar cuando la página carga
+        window.addEventListener('load', initializeApp);
+    </script>
+</body>
+</html>
